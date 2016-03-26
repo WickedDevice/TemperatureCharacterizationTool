@@ -1,5 +1,10 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+  div(ng-controller="UploadCtrl")
+    div.row
+      div.drop-box.col-md-4.col-md-offset-4(ngf-drop="uploadFiles($files)", ngf-drag-over-class="'dragover'", ngf-multiple="true", ngf-pattern="'text/csv'") Drop a CSV file here
+      div.drop-box.col-md-4.col-md-offset-4(ngf-no-file-drop) File Drag/Drop is not supported for this browser
+    div.row
+      span.col-md-4.col-md-offset-4.progress(ng-show="progress >= 0")
+        div(style="width:{{progress}}%", ng-bind="progress + '%'")

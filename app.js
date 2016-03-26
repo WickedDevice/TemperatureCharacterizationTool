@@ -27,6 +27,8 @@ app.use(express.static(path.join(__dirname, 'node_modules/jquery/dist')));
 app.use(express.static(path.join(__dirname, 'node_modules/angular')));
 app.use(express.static(path.join(__dirname, 'node_modules/angular-route')));
 app.use(express.static(path.join(__dirname, 'node_modules/angular-resource')));
+app.use(express.static(path.join(__dirname, 'node_modules/ng-file-upload/dist')));
+
 app.use('/', routes);
 app.use('/users', users);
 

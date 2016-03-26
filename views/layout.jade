@@ -12,18 +12,21 @@ html(lang="en", ng-app="MyApp")
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    link(rel='stylesheet', href='/stylesheets/style.css')
     script(src="html5shiv.min.js")
     script(src="respond.min.js")
     <![endif]-->
+    link(rel='stylesheet', href='/stylesheets/style.css')
   body
     div.container
       block content
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     script(type="text/javascript", src="jquery.min.js")
-    script(src="angular.min.js")
-    script(src="angular-route.min.js")
-    script(src="angular-resource.min.js")
+    script(type="text/javascript", src="angular.min.js")
+    script(type="text/javascript", src="angular-route.min.js")
+    script(type="text/javascript", src="angular-resource.min.js")
+    <!-- for no html5 browsers support -->
+    script(type="text/javascript", src="ng-file-upload-shim.min.js")
+    script(type="text/javascript", src="ng-file-upload.min.js")
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     script(type="text/javascript", src="js/bootstrap.min.js")
@@ -36,6 +39,7 @@ html(lang="en", ng-app="MyApp")
     <!-- Directives -->
 
     <!-- Controllers -->
+    script(type="text/javascript", src="javascripts/controllers/uploadController.js")
 
     <!-- Filters -->
 
