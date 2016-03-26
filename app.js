@@ -24,7 +24,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'node_modules/bootstrap/dist')));
 app.use(express.static(path.join(__dirname, 'node_modules/html5shiv/dist')));
 app.use(express.static(path.join(__dirname, 'node_modules/jquery/dist')));
-
+app.use(express.static(path.join(__dirname, 'node_modules/angular')));
+app.use(express.static(path.join(__dirname, 'node_modules/angular-route')));
+app.use(express.static(path.join(__dirname, 'node_modules/angular-resource')));
 app.use('/', routes);
 app.use('/users', users);
 
