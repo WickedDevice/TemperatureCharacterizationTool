@@ -13,8 +13,9 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.secondary_means = [null, null, null, null, null];
     $scope.temperature_means = [null, null, null, null, null];
     $scope.selected_bin = 0;
-    $scope.slopes = [null, null, null, null, null];
-    $scope.intercepts = [null, null, null, null, null];
+    $scope.slopes = [null, null, null, null];
+    $scope.intercepts = [null, null, null, null];
+    $scope.cli_commands = "";
 
     $scope.header_loaded = function(){
         return $scope.csv_header_row.length > 0;
@@ -22,6 +23,20 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.secondary_column_change = function(){
         $scope.trace2_field = $scope.secondary_column;
         $scope.secondary_heading = $scope.csv_header_row[$scope.secondary_column].name;
+
+        for(var ii = 0; ii < 5; ii++){
+            $scope.secondary_means[ii] = null;
+            $scope.temperature_means[ii] = null;
+        }
+
+        for(var ii = 0; ii < 4; ii++){
+            $scope.slopes[ii] = null;
+            $scope.intercepts[ii] = null;
+        }
+
+        $scope.selected_bin = 0;
+        $scope.cli_commands = "";
+        
         renderPlots();
     };
 
@@ -213,6 +228,64 @@ angular.module('MyApp', ['ngFileUpload'])
         };
 
         Plotly.newPlot('temperature_histogram', temperature_histogram, temperature_layout);
+
+        updateSlopesAndIntercepts();
+        updateCliCommands();
+
         $scope.$apply();
+    }
+
+    function updateSlopesAndIntercepts(){
+        for(var ii = 0, jj = 1; ii < 4; ii++, jj++){
+            if($scope.secondary_means[ii] && $scope.secondary_means[jj]
+              && $scope.temperature_means[ii] && $scope.temperature_means[jj]){
+                $scope.slopes[ii] = computeSlope(
+                    $scope.temperature_means[ii],
+                    $scope.secondary_means[ii],
+                    $scope.temperature_means[jj],
+                    $scope.secondary_means[jj]);
+
+                $scope.intercepts[ii] = computeIntercept(
+                    $scope.temperature_means[ii],
+                    $scope.secondary_means[ii],
+                    $scope.temperature_means[jj],
+                    $scope.secondary_means[jj]);
+            }
+        }
+    }
+
+    // given two points on a line, calculate the slope of the line
+    function computeSlope(xa, ya, xb, yb){
+        return (yb - ya) / (xb - xa);
+    }
+
+    // given two points on a line, calculate the slope of the line
+    function computeIntercept(xa, ya, xb, yb){
+        var m = computeSlope(xa, ya, xb, yb);
+        return ya - (m * xa);
+    }
+
+    function updateCliCommands(){
+        var prefix = "";
+        if($scope.secondary_heading.slice(0, 6) == "no2[V]"){
+            prefix = "no2";
+        }
+        else if($scope.secondary_heading.slice(0, 5) == "co[V]"){
+            prefix = "co";
+        }
+
+        $scope.cli_commands = "";
+        for(var ii = 0; ii < 4; ii++){
+            if($scope.slopes[ii] && $scope.intercepts[ii]){
+                if(ii == 0){
+                    $scope.cli_commands += prefix + "_blv clear";
+                }
+                $scope.cli_commands += "\n";
+                $scope.cli_commands += prefix + "_blv ";
+                $scope.cli_commands += $scope.temperature_means[ii].toFixed(8) + " ";
+                $scope.cli_commands += $scope.slopes[ii].toFixed(8) + " ";
+                $scope.cli_commands += $scope.intercepts[ii].toFixed(8);
+            }
+        }
     }
 }]);

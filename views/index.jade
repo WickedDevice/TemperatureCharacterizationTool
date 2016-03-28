@@ -65,8 +65,6 @@ block content
         input#group3_mean(type="text", disabled, ng-model="slopes[2]")
       div.col-md-2
         input#group4_mean(type="text", disabled, ng-model="slopes[3]")
-      div.col-md-2
-        input#group5_mean(type="text", disabled, ng-model="slopes[4]")
     div.row.form-group
       div.col-md-2
         span Intercepts
@@ -78,8 +76,11 @@ block content
         input#group3_mean(type="text", disabled, ng-model="intercepts[2]")
       div.col-md-2
         input#group4_mean(type="text", disabled, ng-model="intercepts[3]")
+    div.row
       div.col-md-2
-        input#group5_mean(type="text", disabled, ng-model="intercepts[4]")
+        span CLI commands
+      div.col-md-6
+        textarea(ng-model="cli_commands", style = "width:100%", rows="6")
     div.row
       div#scatterplot.col-md-12(style="height: 600px;")
     div.row
