@@ -4,10 +4,10 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.csvdata = [];
     $scope.zoom_start_date = null;
     $scope.zoom_end_date = null;
-    $scope.trace1_field = 1;
     $scope.trace2_field = 5; // no2 voltage
     $scope.csv_header_row = [];
     $scope.secondary_column = 5;
+    $scope.temperature_csv_index = 1;
     $scope.header_loaded = function(){
         return $scope.csv_header_row.length > 0;
     };
@@ -37,6 +37,13 @@ angular.module('MyApp', ['ngFileUpload'])
                        };
                     });
                     $scope.csvdata = response.data.data;
+                    for(var ii = 1; ii < $scope.csvdata.length; ii++){
+                        var m = moment($scope.csvdata[ii][0], "YYYY-MM-DD HH:mm:ss");
+                        $scope.csvdata[ii][0] = {
+                            str: $scope.csvdata[ii][0],
+                            moment: m
+                        };
+                    }
 
                     renderPlots();
                 });
@@ -55,26 +62,28 @@ angular.module('MyApp', ['ngFileUpload'])
     function renderPlots(){
         var trace1 = {
             x: $scope.csvdata.map(function(currentValue, index){
-                return currentValue[0];
+                return currentValue[0].str;
             }).slice(1),
             y: $scope.csvdata.map(function(currentValue, index){
                 return parseFloat(currentValue[$scope.trace2_field]);
             }).slice(1),
             mode: 'markers',
             yaxis: 'y2',
-            type: 'scatter'
+            type: 'scatter',
+            name: $scope.csv_header_row[$scope.secondary_column].name
         };
 
         var trace2 = {
             x: $scope.csvdata.map(function(currentValue, index){
-                return currentValue[0];
+                return currentValue[0].str;
             }).slice(1),
             y: $scope.csvdata.map(function(currentValue, index){
-                return parseFloat(currentValue[$scope.trace1_field]);
+                return parseFloat(currentValue[$scope.temperature_csv_index]);
             }).slice(1),
             mode: 'lines+markers',
             yaxis: 'y',
-            type: 'scatter'
+            type: 'scatter',
+            name: $scope.csv_header_row[$scope.temperature_csv_index].name
         };
 
         var data = [trace1,trace2];
@@ -91,28 +100,28 @@ angular.module('MyApp', ['ngFileUpload'])
         };
 
         Plotly.newPlot('scatterplot', data, layout);
-        $scope.zoom_start_date = moment($scope.csvdata[1][0], "YYYY-MM-DD HH:mm:ss");
-        $scope.zoom_end_date = moment($scope.csvdata[$scope.csvdata.length - 1][0], "YYYY-MM-DD HH:mm:ss");
+        $scope.zoom_start_date = $scope.csvdata[1][0].moment;
+        $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
 
         $('#'+"scatterplot").bind('plotly_relayout',function(event, eventdata){
             if(eventdata["xaxis.autorange"]){
-                $scope.zoom_start_date = moment($scope.csvdata[1][0], "YYYY-MM-DD HH:mm:ss");
-                $scope.zoom_end_date = moment($scope.csvdata[$scope.csvdata.length - 1][0], "YYYY-MM-DD HH:mm:ss");
+                $scope.zoom_start_date = $scope.csvdata[1][0].moment;
+                $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
             }
             else if(eventdata["xaxis.range[0]"] && eventdata["xaxis.range[1]"]){
                 $scope.zoom_start_date = moment(eventdata["xaxis.range[0]"]);
                 $scope.zoom_end_date = moment(eventdata["xaxis.range[1]"]);
             }
 
-            plotHistogram();
+            plotHistograms();
         });
 
-        plotHistogram();
+        plotHistograms();
     }
 
-    function plotHistogram(){
+    function plotHistograms(){
         var data = $scope.csvdata.slice(1).filter(function(value){
-            var m = moment(value, "YYYY-MM-DD HH:mm:ss");
+            var m = value[0].moment;
             return m.isAfter($scope.zoom_start_date) && m.isBefore($scope.zoom_end_date);
         }).map(function(currentValue, index){
             return currentValue[$scope.trace2_field];
@@ -126,11 +135,35 @@ angular.module('MyApp', ['ngFileUpload'])
         ];
 
         var layout = {
-            xaxis: {
-                dtick: 0.0000001
-            }
-        }
+            //xaxis: {
+            //    dtick: 0.0000001
+            //},
+            title: $scope.csv_header_row[$scope.secondary_column].name + " Histogram"
+        };
 
         Plotly.newPlot('histogram', histogram, layout);
+
+        var temperature_data = $scope.csvdata.slice(1).filter(function(value){
+            var m = value[0].moment;
+            return m.isAfter($scope.zoom_start_date) && m.isBefore($scope.zoom_end_date);
+        }).map(function(currentValue, index){
+            return currentValue[$scope.temperature_csv_index];
+        });
+
+        var temperature_histogram = [
+            {
+                x: temperature_data,
+                type: 'histogram'
+            }
+        ];
+
+        var temperature_layout = {
+            //xaxis: {
+            //    dtick: 0.01
+            //},
+            title: "Temperature Histogram"
+        };
+
+        Plotly.newPlot('temperature_histogram', temperature_histogram, temperature_layout);
     }
 }]);
