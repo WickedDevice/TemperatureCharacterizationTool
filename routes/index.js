@@ -173,15 +173,22 @@ router.post('/upload', multipartyMiddleware, function(req, res, next) {
     return merged_data;
 
   }).then(function(merged_data){
+    var data = merged_data;
     return Promise.try(function(){
-      return csvstringify(merged_data);
+      return csvstringify(data);
     }).then(function(merged_data_as_string){
       return fs.writeFileAsync(dest, merged_data_as_string);
+    }).then(function(){
+      return data;
     }).catch(function(err){
       console.log(err);
     })
-  }).then(function(){
+  }).then(function(data){
     console.log("Merged file ready - process complete");
+    res.json({
+      filename: files[0].originalFilename,
+      data: data
+    });
   }).catch(function(exception){
     console.log(exception);
   });
