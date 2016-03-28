@@ -213,5 +213,6 @@ angular.module('MyApp', ['ngFileUpload'])
         };
 
         Plotly.newPlot('temperature_histogram', temperature_histogram, temperature_layout);
+        $scope.$apply();
     }
 }]);
