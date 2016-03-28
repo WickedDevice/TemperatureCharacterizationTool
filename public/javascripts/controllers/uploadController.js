@@ -7,12 +7,21 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.trace2_field = 5; // no2 voltage
     $scope.csv_header_row = [];
     $scope.secondary_column = 5;
+    $scope.secondary_heading = null;
     $scope.temperature_csv_index = 1;
+
+    $scope.secondary_means = [null, null, null, null, null];
+    $scope.temperature_means = [null, null, null, null, null];
+    $scope.selected_bin = 0;
+    $scope.slopes = [null, null, null, null, null];
+    $scope.intercepts = [null, null, null, null, null];
+
     $scope.header_loaded = function(){
         return $scope.csv_header_row.length > 0;
     };
     $scope.secondary_column_change = function(){
         $scope.trace2_field = $scope.secondary_column;
+        $scope.secondary_heading = $scope.csv_header_row[$scope.secondary_column].name;
         renderPlots();
     };
 
@@ -43,8 +52,25 @@ angular.module('MyApp', ['ngFileUpload'])
                             str: $scope.csvdata[ii][0],
                             moment: m
                         };
+
+                        for(var jj = 1; jj < $scope.csvdata[ii].length; jj++){
+                            var val = null;
+                            try{
+                                val = parseFloat($scope.csvdata[ii][jj])
+                                if(!isNaN(val)) {
+                                    $scope.csvdata[ii][jj] = val;
+                                }
+                                else{
+                                    $scope.csvdata[ii][jj] = null;
+                                }
+                            }
+                            catch(e){
+                                $scope.csvdata[ii][jj] = null;
+                            }
+                        }
                     }
 
+                    $scope.secondary_heading = $scope.csv_header_row[$scope.secondary_column].name;
                     renderPlots();
                 });
             }, function (response) {      // handle error
@@ -70,7 +96,7 @@ angular.module('MyApp', ['ngFileUpload'])
             mode: 'markers',
             yaxis: 'y2',
             type: 'scatter',
-            name: $scope.csv_header_row[$scope.secondary_column].name
+            name: $scope.secondary_heading
         };
 
         var trace2 = {
@@ -89,11 +115,11 @@ angular.module('MyApp', ['ngFileUpload'])
         var data = [trace1,trace2];
 
         var layout = {
-            title: $scope.csv_header_row[$scope.secondary_column].name + " vs Time",
+            title: $scope.secondary_heading+ " vs Time",
             height: 600,
             yaxis: {title: 'Temperature'},
             yaxis2: {
-                title: $scope.csv_header_row[$scope.secondary_column].name,
+                title: $scope.secondary_heading,
                 overlaying: 'y',
                 side: 'right'
             }
@@ -120,12 +146,23 @@ angular.module('MyApp', ['ngFileUpload'])
     }
 
     function plotHistograms(){
+        var secondary_sum = 0;
+        var secondary_count = 0;
+
         var data = $scope.csvdata.slice(1).filter(function(value){
             var m = value[0].moment;
             return m.isAfter($scope.zoom_start_date) && m.isBefore($scope.zoom_end_date);
         }).map(function(currentValue, index){
+            if(currentValue[$scope.trace2_field] !== null) {
+                secondary_sum += currentValue[$scope.trace2_field];
+                secondary_count++;
+            }
             return currentValue[$scope.trace2_field];
         });
+
+        if(secondary_count > 0) {
+            $scope.secondary_means[$scope.selected_bin] = secondary_sum / secondary_count;
+        }
 
         var histogram = [
             {
@@ -138,17 +175,28 @@ angular.module('MyApp', ['ngFileUpload'])
             //xaxis: {
             //    dtick: 0.0000001
             //},
-            title: $scope.csv_header_row[$scope.secondary_column].name + " Histogram"
+            title: $scope.secondary_heading + " Histogram"
         };
 
         Plotly.newPlot('histogram', histogram, layout);
+
+        var temperature_sum = 0;
+        var temperature_count = 0;
 
         var temperature_data = $scope.csvdata.slice(1).filter(function(value){
             var m = value[0].moment;
             return m.isAfter($scope.zoom_start_date) && m.isBefore($scope.zoom_end_date);
         }).map(function(currentValue, index){
+            if(currentValue[$scope.temperature_csv_index] !== null) {
+                temperature_sum += currentValue[$scope.temperature_csv_index];
+                temperature_count++;
+            }
             return currentValue[$scope.temperature_csv_index];
         });
+
+        if(temperature_count > 0) {
+            $scope.temperature_means[$scope.selected_bin] = temperature_sum / temperature_count;
+        }
 
         var temperature_histogram = [
             {

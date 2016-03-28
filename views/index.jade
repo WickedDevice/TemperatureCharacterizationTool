@@ -8,9 +8,78 @@ block content
     div.row
       span.col-md-4.col-md-offset-4.progress(ng-show="progress >= 0")
         div(style="width:{{progress}}%", ng-bind="progress + '%'")
-    div.row
-      div.col-md-4.col-md-offset-4
-        select(ng-model="secondary_column", ng-options="obj.idx as obj.name for obj in csv_header_row", ng-show="header_loaded()", ng-change="secondary_column_change()")
+    div.row(style="height:20px")
+    form
+      div.row.form-group
+        div.col-md-4.col-md-offset-4
+          span(ng-show="header_loaded()") Secondary Plot:&nbsp;
+          select(ng-model="secondary_column", ng-options="obj.idx as obj.name for obj in csv_header_row", ng-show="header_loaded()", ng-change="secondary_column_change()")
+      div.row.form-group
+        div.col-md-2
+          span(style="width:30%") Mean&nbsp;
+          input(style="width:70%")(type="text", disabled, ng-model="secondary_heading")
+        div.col-md-2
+          input#group1_mean(type="text", disabled, ng-model="secondary_means[0]")
+        div.col-md-2
+          input#group2_mean(type="text", disabled, ng-model="secondary_means[1]")
+        div.col-md-2
+          input#group3_mean(type="text", disabled, ng-model="secondary_means[2]")
+        div.col-md-2
+          input#group4_mean(type="text", disabled, ng-model="secondary_means[3]")
+        div.col-md-2
+          input#group5_mean(type="text", disabled, ng-model="secondary_means[4]")
+      div.row.form-group
+        div.col-md-2
+          span Mean Temperature
+        div.col-md-2
+          input#group1_mean(type="text", disabled, ng-model="temperature_means[0]")
+        div.col-md-2
+          input#group2_mean(type="text", disabled, ng-model="temperature_means[1]")
+        div.col-md-2
+          input#group3_mean(type="text", disabled, ng-model="temperature_means[2]")
+        div.col-md-2
+          input#group4_mean(type="text", disabled, ng-model="temperature_means[3]")
+        div.col-md-2
+          input#group5_mean(type="text", disabled, ng-model="temperature_means[4]")
+      div.row.form-group
+        div.col-md-2
+          span Bin:
+        div.col-md-2
+          input#group1_mean(type="radio", ng-model="selected_bin", value="0")
+        div.col-md-2
+          input#group2_mean(type="radio", ng-model="selected_bin", value="1")
+        div.col-md-2
+          input#group3_mean(type="radio", ng-model="selected_bin", value="2")
+        div.col-md-2
+          input#group4_mean(type="radio", ng-model="selected_bin", value="3")
+        div.col-md-2
+          input#group5_mean(type="radio", ng-model="selected_bin", value="4")
+    div.row.form-group
+      div.col-md-2
+        span Slopes
+      div.col-md-2
+        input#group1_mean(type="text", disabled, ng-model="slopes[0]")
+      div.col-md-2
+        input#group2_mean(type="text", disabled, ng-model="slopes[1]")
+      div.col-md-2
+        input#group3_mean(type="text", disabled, ng-model="slopes[2]")
+      div.col-md-2
+        input#group4_mean(type="text", disabled, ng-model="slopes[3]")
+      div.col-md-2
+        input#group5_mean(type="text", disabled, ng-model="slopes[4]")
+    div.row.form-group
+      div.col-md-2
+        span Intercepts
+      div.col-md-2
+        input#group1_mean(type="text", disabled, ng-model="intercepts[0]")
+      div.col-md-2
+        input#group2_mean(type="text", disabled, ng-model="intercepts[1]")
+      div.col-md-2
+        input#group3_mean(type="text", disabled, ng-model="intercepts[2]")
+      div.col-md-2
+        input#group4_mean(type="text", disabled, ng-model="intercepts[3]")
+      div.col-md-2
+        input#group5_mean(type="text", disabled, ng-model="intercepts[4]")
     div.row
       div#scatterplot.col-md-12(style="height: 600px;")
     div.row

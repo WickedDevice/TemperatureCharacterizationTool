@@ -9,13 +9,14 @@ html(lang="en", ng-app="MyApp")
     <!-- Bootstrap -->
     link(href="css/bootstrap.min.css", rel="stylesheet")
     link(href="css/bootstrap-theme.css", rel="stylesheet")
+    link(rel='stylesheet', href='/stylesheets/style.css')
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
     script(src="html5shiv.min.js")
     script(src="respond.min.js")
     <![endif]-->
-    link(rel='stylesheet', href='/stylesheets/style.css')
   body
     div.container
       block content
