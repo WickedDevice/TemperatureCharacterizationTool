@@ -11,7 +11,11 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.temperature_csv_index = 1;
 
     $scope.secondary_means = [null, null, null, null, null];
+    $scope.secondary_stdevs = [null, null, null, null, null];
+    $scope.secondary_counts = [null, null, null, null, null];
     $scope.temperature_means = [null, null, null, null, null];
+    $scope.temperature_stdevs = [null, null, null, null, null];
+    $scope.temperature_counts = [null, null, null, null, null];
     $scope.selected_bin = 0;
     $scope.slopes = [null, null, null, null];
     $scope.intercepts = [null, null, null, null];
@@ -26,7 +30,11 @@ angular.module('MyApp', ['ngFileUpload'])
 
         for(var ii = 0; ii < 5; ii++){
             $scope.secondary_means[ii] = null;
+            $scope.secondary_stdevs[ii] = null;
+            $scope.secondary_counts[ii] = null;
             $scope.temperature_means[ii] = null;
+            $scope.temperature_stdevs[ii] = null;
+            $scope.temperature_counts[ii] = null;
         }
 
         for(var ii = 0; ii < 4; ii++){
@@ -36,7 +44,7 @@ angular.module('MyApp', ['ngFileUpload'])
 
         $scope.selected_bin = 0;
         $scope.cli_commands = "";
-        
+
         renderPlots();
     };
 
@@ -175,8 +183,18 @@ angular.module('MyApp', ['ngFileUpload'])
             return currentValue[$scope.trace2_field];
         });
 
+        $scope.secondary_counts[$scope.selected_bin] = secondary_count;
         if(secondary_count > 0) {
             $scope.secondary_means[$scope.selected_bin] = secondary_sum / secondary_count;
+
+            var sum_square_diffs = 0;
+            for(var ii = 0; ii < data.length; ii++){
+                if(data[ii] !== null) {
+                    var diff = data[ii] - $scope.secondary_means[$scope.selected_bin];
+                    sum_square_diffs += diff * diff;
+                }
+            }
+            $scope.secondary_stdevs[$scope.selected_bin] = Math.sqrt(sum_square_diffs / secondary_count);
         }
 
         var histogram = [
@@ -209,8 +227,18 @@ angular.module('MyApp', ['ngFileUpload'])
             return currentValue[$scope.temperature_csv_index];
         });
 
+        $scope.temperature_counts[$scope.selected_bin] = temperature_count;
         if(temperature_count > 0) {
             $scope.temperature_means[$scope.selected_bin] = temperature_sum / temperature_count;
+
+            var sum_square_diffs = 0;
+            for(var ii = 0; ii < temperature_data.length; ii++){
+                if(temperature_data[ii] !== null) {
+                    var diff = temperature_data[ii] - $scope.temperature_means[$scope.selected_bin];
+                    sum_square_diffs += diff * diff;
+                }
+            }
+            $scope.temperature_stdevs[$scope.selected_bin] = Math.sqrt(sum_square_diffs / temperature_count);
         }
 
         var temperature_histogram = [
