@@ -82,9 +82,6 @@ angular.module('MyApp', ['ngFileUpload'])
         var layout = {
             title: $scope.csv_header_row[$scope.secondary_column].name + " vs Time",
             height: 600,
-            xaxis: {
-              dtick: 0.0000001
-            },
             yaxis: {title: 'Temperature'},
             yaxis2: {
                 title: $scope.csv_header_row[$scope.secondary_column].name,
@@ -128,6 +125,12 @@ angular.module('MyApp', ['ngFileUpload'])
             }
         ];
 
-        Plotly.newPlot('histogram', histogram);
+        var layout = {
+            xaxis: {
+                dtick: 0.0000001
+            }
+        }
+
+        Plotly.newPlot('histogram', histogram, layout);
     }
 }]);
