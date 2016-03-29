@@ -342,6 +342,15 @@ angular.module('MyApp', ['ngFileUpload'])
         else if($scope.secondary_heading.slice(0, 5) == "co[V]"){
             prefix = "co";
         }
+        else if($scope.secondary_heading.slice(0, 5) == "so2[V]"){
+            prefix = "so2";
+        }
+        else if($scope.secondary_heading.slice(0, 5) == "o3[V]"){
+            prefix = "o3";
+        }
+        else if($scope.secondary_heading.slice(0, 5) == "pm[V]"){
+            prefix = "pm";
+        }
 
         $scope.cli_commands = "";
         for(var ii = 0; ii < 4; ii++){
@@ -350,7 +359,7 @@ angular.module('MyApp', ['ngFileUpload'])
                     $scope.cli_commands += prefix + "_blv clear";
                 }
                 $scope.cli_commands += "\n";
-                $scope.cli_commands += prefix + "_blv ";
+                $scope.cli_commands += prefix + "_blv add ";
                 $scope.cli_commands += $scope.temperature_means[ii].toFixed(8) + " ";
                 $scope.cli_commands += $scope.slopes[ii].toFixed(8) + " ";
                 $scope.cli_commands += $scope.intercepts[ii].toFixed(8);
