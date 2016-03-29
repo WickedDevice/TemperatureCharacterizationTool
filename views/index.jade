@@ -12,126 +12,169 @@ block content
     form
       div.row.form-group
         div.col-md-6.col-md-offset-3.text-center
-          span(ng-show="header_loaded()") Secondary Plot:&nbsp;
+          span(ng-show="header_loaded()") Secondary Plo
           select.c-select(ng-model="secondary_column", ng-options="obj.idx as obj.name for obj in csv_header_row", ng-show="header_loaded()", ng-change="secondary_column_change()")
-          span &nbsp;
-          div.btn.btn-primary(ngf-select="uploadFiles($files)", multiple="multiple") Select Files Dialog
+          button.btn.btn-primary(style="margin-left:10px;", type="button", ngf-select="uploadFiles($files)", multiple="multiple") Select Files Dialog
+          button.btn.btn-info(style="margin-left:10px;", type="button", ng-hide="hide_stats_data", ng-click="hideStats()") Hide Stats Data
+          button.btn.btn-warning(style="margin-left:10px;", type="button", ng-show="hide_stats_data", ng-click="showStats()") Show Stats Data
       div.row.form-group
+        div.col-md-2.text-right
+          span(style="width:40%") Start&nbsp;
+          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[0].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[1].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[2].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[3].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[4].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+      div.row.form-group
+        div.col-md-2.text-right
+          span(style="width:40%") End&nbsp;
+          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[0].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[1].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[2].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[3].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{time_windows[4].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
+      div.row.form-group
+        div.col-md-2.text-right
+          span(style="width:40%") Duration&nbsp;
+          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+        div.col-md-2
+          input(type="text", disabled, value="{{window_duration(0)}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{window_duration(1)}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{window_duration(2)}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{window_duration(3)}}")
+        div.col-md-2
+          input(type="text", disabled, value="{{window_duration(4)}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Mean&nbsp;
           input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{secondary_means[0].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_means[0].toFixed(8)}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{secondary_means[1].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_means[1].toFixed(8)}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{secondary_means[2].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_means[2].toFixed(8)}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{secondary_means[3].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_means[3].toFixed(8)}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{secondary_means[4].toFixed(8)}}")
-      div.row.form-group
+          input(type="text", disabled, value="{{secondary_means[4].toFixed(8)}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Std Dev&nbsp;
           input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{secondary_stdevs[0].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_stdevs[0].toFixed(8)}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{secondary_stdevs[1].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_stdevs[1].toFixed(8)}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{secondary_stdevs[2].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_stdevs[2].toFixed(8)}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{secondary_stdevs[3].toFixed(8)}}")
+          input(type="text", disabled, value="{{secondary_stdevs[3].toFixed(8)}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{secondary_stdevs[4].toFixed(8)}}")
-      div.row.form-group
+          input(type="text", disabled, value="{{secondary_stdevs[4].toFixed(8)}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Counts&nbsp;
           input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{secondary_counts[0]}}")
+          input(type="text", disabled, value="{{secondary_counts[0]}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{secondary_counts[1]}}")
+          input(type="text", disabled, value="{{secondary_counts[1]}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{secondary_counts[2]}}")
+          input(type="text", disabled, value="{{secondary_counts[2]}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{secondary_counts[3]}}")
+          input(type="text", disabled, value="{{secondary_counts[3]}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{secondary_counts[4]}}")
-      div.row.form-group
+          input(type="text", disabled, value="{{secondary_counts[4]}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span Temperature Mean
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{temperature_means[0].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_means[0].toFixed(2)}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{temperature_means[1].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_means[1].toFixed(2)}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{temperature_means[2].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_means[2].toFixed(2)}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{temperature_means[3].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_means[3].toFixed(2)}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{temperature_means[4].toFixed(2)}}")
-      div.row.form-group
+          input(type="text", disabled, value="{{temperature_means[4].toFixed(2)}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span Temperature Std Dev
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{temperature_stdevs[0].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_stdevs[0].toFixed(2)}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{temperature_stdevs[1].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_stdevs[1].toFixed(2)}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{temperature_stdevs[2].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_stdevs[2].toFixed(2)}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{temperature_stdevs[3].toFixed(2)}}")
+          input(type="text", disabled, value="{{temperature_stdevs[3].toFixed(2)}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{temperature_stdevs[4].toFixed(2)}}")
-      div.row.form-group
+          input(type="text", disabled, value="{{temperature_stdevs[4].toFixed(2)}}")
+      div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span Temperature Counts
         div.col-md-2
-          input#group1_mean(type="text", disabled, value="{{temperature_counts[0]}}")
+          input(type="text", disabled, value="{{temperature_counts[0]}}")
         div.col-md-2
-          input#group2_mean(type="text", disabled, value="{{temperature_counts[1]}}")
+          input(type="text", disabled, value="{{temperature_counts[1]}}")
         div.col-md-2
-          input#group3_mean(type="text", disabled, value="{{temperature_counts[2]}}")
+          input(type="text", disabled, value="{{temperature_counts[2]}}")
         div.col-md-2
-          input#group4_mean(type="text", disabled, value="{{temperature_counts[3]}}")
+          input(type="text", disabled, value="{{temperature_counts[3]}}")
         div.col-md-2
-          input#group5_mean(type="text", disabled, value="{{temperature_counts[4]}}")
+          input(type="text", disabled, value="{{temperature_counts[4]}}")
       div.row.form-group
         div.col-md-2.text-right
           span Temperature Bin
         div.col-md-2.text-center
-          input#group1_mean(type="radio", ng-model="selected_bin", value="0")
+          input(type="radio", ng-model="selected_bin", value="0")
         div.col-md-2.text-center
-          input#group2_mean(type="radio", ng-model="selected_bin", value="1")
+          input(type="radio", ng-model="selected_bin", value="1")
         div.col-md-2.text-center
-          input#group3_mean(type="radio", ng-model="selected_bin", value="2")
+          input(type="radio", ng-model="selected_bin", value="2")
         div.col-md-2.text-center
-          input#group4_mean(type="radio", ng-model="selected_bin", value="3")
+          input(type="radio", ng-model="selected_bin", value="3")
         div.col-md-2.text-center
-          input#group5_mean(type="radio", ng-model="selected_bin", value="4")
+          input(type="radio", ng-model="selected_bin", value="4")
     div.row.form-group
       div.col-md-2.text-right
         span Slopes
       div.col-md-2
-        input#group1_mean(type="text", disabled, value="{{slopes[0].toFixed(8)}}")
+        input(type="text", disabled, value="{{slopes[0].toFixed(8)}}")
       div.col-md-2
-        input#group2_mean(type="text", disabled, value="{{slopes[1].toFixed(8)}}")
+        input(type="text", disabled, value="{{slopes[1].toFixed(8)}}")
       div.col-md-2
-        input#group3_mean(type="text", disabled, value="{{slopes[2].toFixed(8)}}")
+        input(type="text", disabled, value="{{slopes[2].toFixed(8)}}")
       div.col-md-2
-        input#group4_mean(type="text", disabled, value="{{slopes[3].toFixed(8)}}")
+        input(type="text", disabled, value="{{slopes[3].toFixed(8)}}")
     div.row.form-group
       div.col-md-2.text-right
         span Intercepts
       div.col-md-2
-        input#group1_mean(type="text", disabled, value="{{intercepts[0].toFixed(8)}}")
+        input(type="text", disabled, value="{{intercepts[0].toFixed(8)}}")
       div.col-md-2
-        input#group2_mean(type="text", disabled, value="{{intercepts[1].toFixed(8)}}")
+        input(type="text", disabled, value="{{intercepts[1].toFixed(8)}}")
       div.col-md-2
-        input#group3_mean(type="text", disabled, value="{{intercepts[2].toFixed(8)}}")
+        input(type="text", disabled, value="{{intercepts[2].toFixed(8)}}")
       div.col-md-2
-        input#group4_mean(type="text", disabled, value="{{intercepts[3].toFixed(8)}}")
+        input(type="text", disabled, value="{{intercepts[3].toFixed(8)}}")
     div.row
       div.col-md-2.text-right
         span CLI commands

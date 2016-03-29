@@ -11,6 +11,7 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.temperature_csv_index = 1;
     $scope.generated_filename = null;
 
+    $scope.time_windows = [{}, {}, {}, {}, {}];
     $scope.secondary_means = [null, null, null, null, null];
     $scope.secondary_stdevs = [null, null, null, null, null];
     $scope.secondary_counts = [null, null, null, null, null];
@@ -21,6 +22,10 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.slopes = [null, null, null, null];
     $scope.intercepts = [null, null, null, null];
     $scope.cli_commands = "";
+    $scope.hide_stats_data = true;
+
+    $scope.hideStats = function(){ $scope.hide_stats_data = true; }
+    $scope.showStats = function(){ $scope.hide_stats_data = false; }
 
     $scope.header_loaded = function(){
         return $scope.csv_header_row.length > 0;
@@ -47,6 +52,30 @@ angular.module('MyApp', ['ngFileUpload'])
         $scope.cli_commands = "";
 
         renderPlots();
+
+        var restore_zoom_start_date = moment($scope.zoom_start_date);
+        var restore_zoom_end_date = moment($scope.zoom_end_date);
+
+        for(var ii = 1; ii < 5; ii++){
+            $scope.zoom_start_date = moment($scope.time_windows[ii].start_moment);
+            $scope.zoom_end_date = moment($scope.time_windows[ii].end_moment);
+            $scope.selected_bin = ii;
+            plotHistograms();
+        }
+
+        $scope.selected_bin = 0;
+        $scope.zoom_start_date = moment(restore_zoom_start_date);
+        $scope.zoom_end_date = moment(restore_zoom_end_date);
+        plotHistograms();
+
+    };
+
+    $scope.window_duration = function(index){
+        if($scope.time_windows[index].start_moment && $scope.time_windows[index].end_moment){
+              return $scope.time_windows[index].end_moment
+                .diff($scope.time_windows[index].start_moment, "Minutes").toFixed(0) + " minutes";
+        }
+        return null;
     };
 
     $scope.uploadFiles = function (files) {
@@ -155,17 +184,28 @@ angular.module('MyApp', ['ngFileUpload'])
         $scope.zoom_start_date = $scope.csvdata[1][0].moment;
         $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
 
+        $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+        $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
+
         $('#'+"scatterplot").bind('plotly_relayout',function(event, eventdata){
             if(eventdata["xaxis.autorange"]){
                 $scope.zoom_start_date = $scope.csvdata[1][0].moment;
                 $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
+
+                $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+                $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
+
             }
             else if(eventdata["xaxis.range[0]"] && eventdata["xaxis.range[1]"]){
                 $scope.zoom_start_date = moment(eventdata["xaxis.range[0]"]);
                 $scope.zoom_end_date = moment(eventdata["xaxis.range[1]"]);
+
+                $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+                $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
             }
 
             plotHistograms();
+            $scope.$apply();
         });
 
         plotHistograms();
@@ -186,8 +226,8 @@ angular.module('MyApp', ['ngFileUpload'])
             return currentValue[$scope.trace2_field];
         });
 
-        $scope.secondary_counts[$scope.selected_bin] = secondary_count;
         if(secondary_count > 0) {
+            $scope.secondary_counts[$scope.selected_bin] = secondary_count;
             $scope.secondary_means[$scope.selected_bin] = secondary_sum / secondary_count;
 
             var sum_square_diffs = 0;
@@ -230,8 +270,8 @@ angular.module('MyApp', ['ngFileUpload'])
             return currentValue[$scope.temperature_csv_index];
         });
 
-        $scope.temperature_counts[$scope.selected_bin] = temperature_count;
         if(temperature_count > 0) {
+            $scope.temperature_counts[$scope.selected_bin] = temperature_count;
             $scope.temperature_means[$scope.selected_bin] = temperature_sum / temperature_count;
 
             var sum_square_diffs = 0;
@@ -262,8 +302,6 @@ angular.module('MyApp', ['ngFileUpload'])
 
         updateSlopesAndIntercepts();
         updateCliCommands();
-
-        $scope.$apply();
     }
 
     function updateSlopesAndIntercepts(){
