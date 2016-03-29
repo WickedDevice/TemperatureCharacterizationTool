@@ -9,6 +9,7 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.secondary_column = 5;
     $scope.secondary_heading = null;
     $scope.temperature_csv_index = 1;
+    $scope.generated_filename = null;
 
     $scope.secondary_means = [null, null, null, null, null];
     $scope.secondary_stdevs = [null, null, null, null, null];
@@ -51,6 +52,7 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.uploadFiles = function (files) {
         $scope.files = files;
         if (files && files.length) {
+            $scope.generated_filename = null;
             Upload.upload({
                 url: '/upload',
                 method: 'POST',
@@ -68,6 +70,7 @@ angular.module('MyApp', ['ngFileUpload'])
                            name: value
                        };
                     });
+                    $scope.generated_filename = response.data.filename.split(".")[0];
                     $scope.csvdata = response.data.data;
                     for(var ii = 1; ii < $scope.csvdata.length; ii++){
                         var m = moment($scope.csvdata[ii][0], "YYYY-MM-DD HH:mm:ss");
