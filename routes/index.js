@@ -66,7 +66,7 @@ router.post('/upload', multipartyMiddleware, function(req, res, next) {
           }
           catch(e){}; //TODO: discouraged but it's going to happen on the header row
 
-          if(m.isValid()){
+          if(m && m.isValid()){
             if(row[0] != m.format("MM/DD/YYYY HH:mm:ss")){
               console.log("inverse failed");
             }

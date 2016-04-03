@@ -83,7 +83,7 @@ angular.module('MyApp', ['ngFileUpload'])
         if (files && files.length) {
             $scope.generated_filename = null;
             Upload.upload({
-                url: '/upload',
+                url: 'upload',
                 method: 'POST',
                 data: {
                     files: files
