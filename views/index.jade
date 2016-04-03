@@ -12,7 +12,7 @@ block content
     form
       div.row.form-group
         div.col-md-6.col-md-offset-3.text-center
-          span(ng-show="header_loaded()") Secondary Plo
+          span(ng-show="header_loaded()") Secondary Plot:&nbsp;
           select.c-select(ng-model="secondary_column", ng-options="obj.idx as obj.name for obj in csv_header_row", ng-show="header_loaded()", ng-change="secondary_column_change()")
           button.btn.btn-primary(style="margin-left:10px;", type="button", ngf-select="uploadFiles($files)", multiple="multiple") Select Files Dialog
           button.btn.btn-info(style="margin-left:10px;", type="button", ng-hide="hide_stats_data", ng-click="hideStats()") Hide Stats Data
