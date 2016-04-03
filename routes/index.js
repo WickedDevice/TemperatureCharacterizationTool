@@ -114,7 +114,7 @@ router.post('/upload', multipartyMiddleware, function(req, res, next) {
     var merged_data = []; // this will be an array of rows when we're done
     merged_data.push(analyzedParsedCsvData[0].rows[0]); // the first row of the first record should be a header row
 
-    var sample_rate = 5;
+    var sample_rate = 1;
     var half_sample_rate = sample_rate / 2;
 
     // iterate over the time span at the sample rate
