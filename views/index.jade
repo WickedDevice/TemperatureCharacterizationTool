@@ -8,15 +8,17 @@ block content
     div.row
       span.col-md-4.col-md-offset-4.progress(ng-show="progress >= 0")
         div(style="width:{{progress}}%", ng-bind="progress + '%'")
+    div.row.text-center(style="height:20px") &nbsp;
     div.row.text-center(style="height:20px") {{generated_filename}}
     form
       div.row.form-group
-        div.col-md-6.col-md-offset-3.text-center
+        div.col-md-12.text-center
           span(ng-show="header_loaded()") Secondary Plot:&nbsp;
           select.c-select(ng-model="secondary_column", ng-options="obj.idx as obj.name for obj in csv_header_row", ng-show="header_loaded()", ng-change="secondary_column_change()")
           button.btn.btn-primary(style="margin-left:10px;", type="button", ngf-select="uploadFiles($files)", multiple="multiple") Select Files Dialog
           button.btn.btn-info(style="margin-left:10px;", type="button", ng-hide="hide_stats_data", ng-click="hideStats()") Hide Stats Data
           button.btn.btn-warning(style="margin-left:10px;", type="button", ng-show="hide_stats_data", ng-click="showStats()") Show Stats Data
+          button.btn.btn-info(style="margin-left:10px;", type="button", ng-click="freezeStats()") Freeze Stats
       div.row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Start&nbsp;

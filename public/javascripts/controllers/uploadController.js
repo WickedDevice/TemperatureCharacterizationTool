@@ -30,6 +30,10 @@ angular.module('MyApp', ['ngFileUpload'])
     $scope.header_loaded = function(){
         return $scope.csv_header_row.length > 0;
     };
+
+    $scope.freezeStats = function(){
+        $scope.selected_bin = null;
+    };
     $scope.secondary_column_change = function(){
         $scope.trace2_field = $scope.secondary_column;
         $scope.secondary_heading = $scope.csv_header_row[$scope.secondary_column].name;
@@ -63,7 +67,7 @@ angular.module('MyApp', ['ngFileUpload'])
             plotHistograms();
         }
 
-        $scope.selected_bin = 0;
+        $scope.selected_bin = null;
         $scope.zoom_start_date = moment(restore_zoom_start_date);
         $scope.zoom_end_date = moment(restore_zoom_end_date);
         plotHistograms();
