@@ -346,7 +346,7 @@ angular.module('MyApp', ['ngFileUpload'])
         else if($scope.secondary_heading.slice(0, 5) == "co[V]"){
             prefix = "co";
         }
-        else if($scope.secondary_heading.slice(0, 5) == "so2[V]"){
+        else if($scope.secondary_heading.slice(0, 6) == "so2[V]"){
             prefix = "so2";
         }
         else if($scope.secondary_heading.slice(0, 5) == "o3[V]"){
