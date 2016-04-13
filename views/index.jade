@@ -146,15 +146,15 @@ block content
         div.col-md-2.text-right
           span Temperature Bin
         div.col-md-2.text-center
-          input(type="radio", ng-model="selected_bin", value="0")
+          input(type="radio", ng-model="selected_bin", value="0" ng-change="selectBin(0)")
         div.col-md-2.text-center
-          input(type="radio", ng-model="selected_bin", value="1")
+          input(type="radio", ng-model="selected_bin", value="1" ng-change="selectBin(1)")
         div.col-md-2.text-center
-          input(type="radio", ng-model="selected_bin", value="2")
+          input(type="radio", ng-model="selected_bin", value="2" ng-change="selectBin(2)")
         div.col-md-2.text-center
-          input(type="radio", ng-model="selected_bin", value="3")
+          input(type="radio", ng-model="selected_bin", value="3" ng-change="selectBin(3)")
         div.col-md-2.text-center
-          input(type="radio", ng-model="selected_bin", value="4")
+          input(type="radio", ng-model="selected_bin", value="4" ng-change="selectBin(4)")
     div.row.form-group
       div.col-md-2.text-right
         span Slopes

@@ -31,6 +31,10 @@ angular.module('MyApp', ['ngFileUpload'])
         return $scope.csv_header_row.length > 0;
     };
 
+    $scope.selectBin = function(value){
+        $scope.selected_bin = value;
+    };
+
     $scope.freezeStats = function(){
         $scope.selected_bin = null;
     };
@@ -52,15 +56,12 @@ angular.module('MyApp', ['ngFileUpload'])
             $scope.intercepts[ii] = null;
         }
 
-        $scope.selected_bin = 0;
         $scope.cli_commands = "";
-
-        renderPlots();
 
         var restore_zoom_start_date = moment($scope.zoom_start_date);
         var restore_zoom_end_date = moment($scope.zoom_end_date);
 
-        for(var ii = 1; ii < 5; ii++){
+        for(var ii = 0; ii < 5; ii++){
             $scope.zoom_start_date = moment($scope.time_windows[ii].start_moment);
             $scope.zoom_end_date = moment($scope.time_windows[ii].end_moment);
             $scope.selected_bin = ii;
@@ -188,28 +189,36 @@ angular.module('MyApp', ['ngFileUpload'])
         $scope.zoom_start_date = $scope.csvdata[1][0].moment;
         $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
 
-        $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
-        $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
+        if($scope.selected_bin !== null) {
+            $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+            $scope.time_windows[$scope.selected_bin].end_moment = $scope.zoom_end_date;
+        }
 
         $('#'+"scatterplot").bind('plotly_relayout',function(event, eventdata){
-            if(eventdata["xaxis.autorange"]){
-                $scope.zoom_start_date = $scope.csvdata[1][0].moment;
-                $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
+            $timeout(function() {
+                if (eventdata["xaxis.autorange"]) {
+                    $scope.zoom_start_date = $scope.csvdata[1][0].moment;
+                    $scope.zoom_end_date = $scope.csvdata[$scope.csvdata.length - 1][0].moment;
 
-                $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
-                $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
+                    if ($scope.selected_bin !== null) {
+                        $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+                        $scope.time_windows[$scope.selected_bin].end_moment = $scope.zoom_end_date;
+                    }
 
-            }
-            else if(eventdata["xaxis.range[0]"] && eventdata["xaxis.range[1]"]){
-                $scope.zoom_start_date = moment(eventdata["xaxis.range[0]"]);
-                $scope.zoom_end_date = moment(eventdata["xaxis.range[1]"]);
+                }
+                else if (eventdata["xaxis.range[0]"] && eventdata["xaxis.range[1]"]) {
+                    $scope.zoom_start_date = moment(eventdata["xaxis.range[0]"]);
+                    $scope.zoom_end_date = moment(eventdata["xaxis.range[1]"]);
 
-                $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
-                $scope.time_windows[$scope.selected_bin].end_moment  = $scope.zoom_end_date;
-            }
+                    if ($scope.selected_bin !== null) {
+                        $scope.time_windows[$scope.selected_bin].start_moment = $scope.zoom_start_date;
+                        $scope.time_windows[$scope.selected_bin].end_moment = $scope.zoom_end_date;
+                    }
+                }
 
-            plotHistograms();
-            $scope.$apply();
+                plotHistograms();
+            });
+
         });
 
         plotHistograms();
