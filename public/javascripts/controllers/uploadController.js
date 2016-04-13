@@ -2,6 +2,8 @@ angular.module('MyApp', ['ngFileUpload'])
 .controller('UploadCtrl', ['$scope', 'Upload', '$timeout', function ($scope, Upload, $timeout) {
 
     $scope.csvdata = [];
+    $scope.earliest_date = null;
+    $scope.latest_date = null;
     $scope.zoom_start_date = null;
     $scope.zoom_end_date = null;
     $scope.trace2_field = 5; // no2 voltage
@@ -33,6 +35,15 @@ angular.module('MyApp', ['ngFileUpload'])
 
     $scope.selectBin = function(value){
         $scope.selected_bin = value;
+        if($scope.time_windows[value]) {
+            $scope.zoom_start_date = moment($scope.time_windows[value].start_moment);
+            $scope.zoom_end_date = moment($scope.time_windows[value].end_moment);
+        }
+        else{
+            $scope.zoom_start_date = moment($scope.earliest_date);
+            $scope.zoom_end_date = moment($scope.latest_date);
+        }
+        renderPlots();
     };
 
     $scope.freezeStats = function(){
@@ -71,7 +82,7 @@ angular.module('MyApp', ['ngFileUpload'])
         $scope.selected_bin = null;
         $scope.zoom_start_date = moment(restore_zoom_start_date);
         $scope.zoom_end_date = moment(restore_zoom_end_date);
-        plotHistograms();
+        renderPlots();
 
     };
 
@@ -108,6 +119,13 @@ angular.module('MyApp', ['ngFileUpload'])
                     $scope.csvdata = response.data.data;
                     for(var ii = 1; ii < $scope.csvdata.length; ii++){
                         var m = moment($scope.csvdata[ii][0], "YYYY-MM-DD HH:mm:ss");
+                        if(!$scope.latest_date || m.isAfter($scope.latest_date)){
+                          $scope.latest_date = moment(m);
+                        }
+                        if(!$scope.earliest_date || m.isBefore($scope.latest_date)){
+                          $scope.earliest_date = moment(m);
+                        }
+
                         $scope.csvdata[ii][0] = {
                             str: $scope.csvdata[ii][0],
                             moment: m
