@@ -22,7 +22,7 @@ block content
       div.row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Start&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{time_windows[0].start_moment.format('YYYY-MM-DD HH:mm:ss')}}")
         div.col-md-2
@@ -36,7 +36,7 @@ block content
       div.row.form-group
         div.col-md-2.text-right
           span(style="width:40%") End&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{time_windows[0].end_moment.format('YYYY-MM-DD HH:mm:ss')}}")
         div.col-md-2
@@ -50,7 +50,7 @@ block content
       div.row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Duration&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{window_duration(0)}}")
         div.col-md-2
@@ -64,7 +64,7 @@ block content
       div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Mean&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{secondary_means[0].toFixed(8)}}")
         div.col-md-2
@@ -78,7 +78,7 @@ block content
       div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Std Dev&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{secondary_stdevs[0].toFixed(8)}}")
         div.col-md-2
@@ -92,7 +92,7 @@ block content
       div(ng-hide="hide_stats_data").row.form-group
         div.col-md-2.text-right
           span(style="width:40%") Counts&nbsp;
-          input(style="width:60%")(type="text", disabled, ng-model="secondary_heading")
+          input(style="width:60%", type="text", disabled, ng-model="secondary_heading")
         div.col-md-2
           input(type="text", disabled, value="{{secondary_counts[0]}}")
         div.col-md-2
