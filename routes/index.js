@@ -7,6 +7,7 @@ var fs = require('fs-extra-promise');
 var moment = require('moment');
 var csvparse= Promise.promisify(require('csv-parse'));
 var csvstringify = Promise.promisify(require('csv-stringify'));
+var promiseDoWhilst = require('promise-do-whilst');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -126,57 +127,66 @@ router.post('/upload', multipartyMiddleware, function(req, res, next) {
     var start = moment();
     console.log("Beginning merge @ " + start.format());
     var num_missing_records = 0;
-    while(first_date.isBefore(last_date)){
-      var end_of_window = moment(first_date).add(half_sample_rate, "seconds");
-      var start_of_window = moment(first_date).subtract(half_sample_rate, "seconds");
 
-      //if(moment("2016-03-25 15:00:00", "YYYY-MM-DD HH:mm:ss").isBefore(start_of_window)){
-      //  console.log("Break!");
-      //}
+    if(first_date.isBefore(last_date)) {
+      return promiseDoWhilst(() => {
+        return Promise.try(() => {
+          var end_of_window = moment(first_date).add(half_sample_rate, "seconds");
+          var start_of_window = moment(first_date).subtract(half_sample_rate, "seconds");
 
-      // for each sample moment, search for a record in each file that
-      // is within a half_sample_rate of the current moment of interest
-      // advance the pointer in each file until it is beyond the window
-      found = false;
-      for(var ii = 0; ii < analyzedParsedCsvData.length; ii++){
-        var jj;
-        for(jj = search_indexes[ii]; jj < analyzedParsedCsvData[ii].rows.length; jj++){
+          //if(moment("2016-03-25 15:00:00", "YYYY-MM-DD HH:mm:ss").isBefore(start_of_window)){
+          //  console.log("Break!");
+          //}
 
-          var row = analyzedParsedCsvData[ii].rows[jj].slice(0, analyzedParsedCsvData[ii].rows[jj].length);
-          var row_timestamp = row[0];
+          // for each sample moment, search for a record in each file that
+          // is within a half_sample_rate of the current moment of interest
+          // advance the pointer in each file until it is beyond the window
+          found = false;
+          for(var ii = 0; ii < analyzedParsedCsvData.length; ii++){
+            var jj;
+            for(jj = search_indexes[ii]; jj < analyzedParsedCsvData[ii].rows.length; jj++){
 
-          // stop searching this file if you encounter a time that occurs after the end of the window
-          if(row_timestamp.isAfter(end_of_window)){
-            break;
-          }
-          else if(row_timestamp.isBefore(end_of_window) && row_timestamp.isAfter(start_of_window)){
-            if(!found) {
-              // we have a winner for this moment, store it and set the flag
-              //row[0] = JSON.stringify(search_indexes)
-              //  + " using " + ii + " " + analyzedParsedCsvData[ii].filename
-              //  + " " + first_date.format("YYYY-MM-DD HH:mm:ss")
-              //  + " " + row_timestamp.format("YYYY-MM-DD HH:mm:ss"); // Plot.ly formatted dates
-              row[0] = row_timestamp.format("YYYY-MM-DD HH:mm:ss"); // Plot.ly formatted dates
-              merged_data.push(row); // this is a row
-              found = true;
+              var row = analyzedParsedCsvData[ii].rows[jj].slice(0, analyzedParsedCsvData[ii].rows[jj].length);
+              var row_timestamp = row[0];
+
+              // stop searching this file if you encounter a time that occurs after the end of the window
+              if(row_timestamp.isAfter(end_of_window)){
+                break;
+              }
+              else if(row_timestamp.isBefore(end_of_window) && row_timestamp.isAfter(start_of_window)){
+                if(!found) {
+                  // we have a winner for this moment, store it and set the flag
+                  //row[0] = JSON.stringify(search_indexes)
+                  //  + " using " + ii + " " + analyzedParsedCsvData[ii].filename
+                  //  + " " + first_date.format("YYYY-MM-DD HH:mm:ss")
+                  //  + " " + row_timestamp.format("YYYY-MM-DD HH:mm:ss"); // Plot.ly formatted dates
+                  row[0] = row_timestamp.format("YYYY-MM-DD HH:mm:ss"); // Plot.ly formatted dates
+                  merged_data.push(row); // this is a row
+                  found = true;
+                }
+              }
             }
+
+            search_indexes[ii] = jj; // pick up here on the next moment
           }
-        }
 
-        search_indexes[ii] = jj; // pick up here on the next moment
-      }
+          if(!found){
+            //console.log("No viable records found for " + first_date.format("YYYY-MM-DD HH:mm:ss"));
+            num_missing_records++;
+          }
 
-      if(!found){
-        //console.log("No viable records found for " + first_date.format("YYYY-MM-DD HH:mm:ss"));
-        num_missing_records++;
-      }
-
-      first_date.add(sample_rate, 'seconds');
+          first_date.add(sample_rate, 'seconds');
+        });
+      }, () => {
+        return first_date.isBefore(last_date);
+      }).then(() => {
+        console.log("Merge complete @ " + moment().format() + " [" + moment().diff(start, "seconds") + "], merged down to " + merged_data.length + " records, missing records: " + num_missing_records);
+        return merged_data;
+      });
     }
-    console.log("Merge complete @ " + moment().format() + " [" + moment().diff(start, "seconds") + "], merged down to " + merged_data.length + " records, missing records: " + num_missing_records);
-
-    return merged_data;
-
+    else{
+      return merged_data;
+    }
   }).then(function(merged_data){
     var data = merged_data;
     return Promise.try(function(){
