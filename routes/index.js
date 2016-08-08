@@ -38,7 +38,8 @@ router.post('/upload', multipartyMiddleware, function(req, res, next) {
     var fileContents = obj.contents;
 
     // replace all instances of (\n or \r\n) with \r\n to make the line endings uniform
-    fileContents = fileContents.toString().replace(/\r?\n/g, "\r\n");
+    fileContents = fileContents.toString().replace(/\r?\n/g, "\r\n"); // convert \r to \r\n
+    fileContents = fileContents.toString().replace(/,\r\n/g, "\r\n"); // get rid of trailing commas with nothing after them
 
     var obj = { filename: obj.filename };
     return Promise.try(function(){
